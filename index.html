@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Layout</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .navbar-brand img {
+      height: 30px;
+    }
+    .btn-login {
+      border-radius: 20px;
+    }
+    .header-text {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .header-text h1 {
+      font-weight: bold;
+    }
+    .header-text p {
+      color: #6c757d;
+    }
+    .blog-card {
+      border: none;
+      border-bottom: 1px solid #e9ecef;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+    }
+    .blog-card a {
+      text-decoration: none;
+      color: black;
+    }
+    .blog-card a:hover {
+      text-decoration: underline;
+    }
+    .blog-meta {
+      color: #6c757d;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="./Ellipse 1.png" alt="Coranu Logo">
+        <span class="ms-2 fw-bold">Coranu</span>
+      </a>
+      <div class="collapse navbar-collapse">
+        <!-- Removed category select dropdown -->
+        <form class="d-flex mx-auto" id="searchForm">
+          <!-- Search Bar -->
+          <input type="text" class="form-control search-bar me-2" id="searchInput" placeholder="Search posts...">
+        </form>
+        <a class="btn btn-primary btn-login" href="signup.html">Login/Register</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header Section -->
+  <div class="container header-text">
+    <h1>Thoughts, Ideas, and Stories</h1>
+    <p>A space where creativity flows, ideas take shape, and stories come to life. Dive in, explore, and connect with insights that inspire and resonate.</p>
+  </div>
+<hr>
+  <!-- Main Content Container -->
+  <div class="container mt-5">
+    <div class="row">
+      <!-- Left Section: Blog Topics and Guide & Tools -->
+      <div class="col-md-3">
+        <!-- Blog Topics -->
+        <div class="mb-4">
+          <h5 class="fw-bold">Blog Topics</h5>
+          <ul class="list-unstyled">
+            <li><a href="#">Company</a></li>
+            <li><a href="#">Design</a></li>
+            <li><a href="#">Technology</a></li>
+            <li><a href="#">Crypto</a></li>
+            <li><a href="#">Artificial Intelligence</a></li>
+            <li><a href="#">Work</a></li>
+          </ul>
+        </div>
+  
+        <!-- Guide and Tools -->
+        <div>
+          <h5 class="fw-bold">Guide and Tools</h5>
+          <ul class="list-unstyled">
+            <li><a href="#">Guidelines</a></li>
+            <li><a href="#">Mentorship</a></li>
+            <li><a href="#">Tutorial</a></li>
+            <li><a href="#">Training</a></li>
+            <li><a href="#">Career</a></li>
+            <li><a href="#">Self Care</a></li>
+          </ul>
+        </div>
+      </div>
+  
+      <!-- Right Section: Blog Content -->
+      <div class="col-md-9">
+        <!-- Blog Section -->
+        <div id="postsContainer">
+          <!-- Posts will be displayed here -->
+        </div>
+      </div>
+    </div>
+  </div>
+<hr>
+<footer class="bg-light text-dark py-4 mt-5">
+  <div class="container text-center">
+    <div class="footer-left">
+      <h5 style="color: rgb(0, 149, 255);">Stay up to date</h5>
+      <p>Join Our Newsletter</p>
+      <form class="d-flex justify-content-center">
+        <input type="email" class="form-control me-2" placeholder="Enter your email..." required style="max-width: 300px;">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      <small>*You can unsubscribe anytime</small>
+    </div>
+  </div>
+</footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Initialize an empty array to store posts
+    let posts = [];
+
+    // Function to display all posts inside card format
+    function displayPosts(filteredPosts = null) {
+      const postsContainer = document.getElementById("postsContainer");
+      postsContainer.innerHTML = '';  // Clear existing posts
+
+      // Use filteredPosts if provided, otherwise display all posts
+      const displayList = filteredPosts || posts;
+
+      // Iterate through the displayList and append them to the container inside cards
+      displayList.forEach(post => {
+        const postCard = document.createElement("div");
+        postCard.classList.add("card", "mb-4");
+
+        postCard.innerHTML = ` 
+          <div class="card-body">
+            <h5 class="card-title">
+              <a href="#">${post.title}</a>
+            </h5>
+            <p class="blog-meta">${post.date} · By Anonymous · 5 min read</p>
+            <p class="card-text">${post.content}</p>
+          </div>
+        `;
+        postsContainer.appendChild(postCard);
+      });
+    }
+
+    // Function to filter posts by keyword only (category removed)
+    function filterPosts(keyword) {
+      const filteredPosts = posts.filter(post => {
+        const matchesKeyword = keyword ? post.title.toLowerCase().includes(keyword.toLowerCase()) || post.content.toLowerCase().includes(keyword.toLowerCase()) : true;
+        return matchesKeyword;
+      });
+      displayPosts(filteredPosts);
+    }
+
+    // Event listener for loading posts from localStorage
+    window.addEventListener("load", function() {
+      if (localStorage.getItem("posts")) {
+        posts = JSON.parse(localStorage.getItem("posts"));
+        displayPosts();
+      }
+
+      // Event listener for the search input
+      document.getElementById("searchInput").addEventListener("input", function() {
+        const searchKeyword = this.value;
+        filterPosts(searchKeyword);
+      });
+    });
+
+    // Add post through a form (this function will include the selected categories)
+    function addPost(title, content, categories) {
+      const newPost = {
+        title: title,
+        content: content,
+        date: new Date().toLocaleDateString(),
+        categories: categories, // Categories will be an array
+      };
+
+      // Add the new post to the posts array
+      posts.push(newPost);
+      localStorage.setItem("posts", JSON.stringify(posts));
+      displayPosts();
+    }
+  </script>
+</body>
+</html>
